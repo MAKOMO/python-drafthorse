@@ -99,7 +99,7 @@ class TradeParty(Element):
     address = Field(
         PostalTradeAddress, required=False, profile=BASIC, _d="Anschrift des Käufers"
     )
-    electronic_adress = MultiField(
+    electronic_address = MultiField(
         URIUniversalCommunication, required=False, profile=BASIC
     )
     tax_registrations = MultiField(TaxRegistration, required=False, profile=BASIC)

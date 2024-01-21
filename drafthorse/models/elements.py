@@ -7,7 +7,7 @@ from decimal import Decimal
 
 from drafthorse.utils import validate_xml
 
-from . import NS_UDT
+from . import NS_UDT, NS_A
 from .container import Container
 from .fields import Field
 
@@ -15,6 +15,7 @@ from .fields import Field
 class BaseElementMeta(type):
     @classmethod
     def __prepare__(self, name, bases):
+        del name, bases
         return collections.OrderedDict()
 
     def __new__(mcls, name, bases, attrs):
@@ -50,7 +51,7 @@ class Element(metaclass=BaseElementMeta):
 
     def to_etree(self):
         node = self._etree_node()
-        for k, v in self._data.items():
+        for _, v in self._data.items():
             if v is not None:
                 v.append_to(node)
         return node
@@ -80,7 +81,7 @@ class Element(metaclass=BaseElementMeta):
         if (
             not hasattr(self, key)
             and not key.startswith("_")
-            and not key in ("required",)
+            and key not in ("required",)
         ):
             raise AttributeError(
                 f"Element {type(self)} has no attribute '{key}'. If you set it, it would not be included in the output."
@@ -308,7 +309,7 @@ class IDElement(StringElement):
         self._text = root.text
         try:
             self._scheme_id = root.attrib["schemeID"]
-        except:
+        except Exception:
             root.attrib["schemeID"] = ""
             self._scheme_id = root.attrib["schemeID"]
         self._set_on_input = True
@@ -319,14 +320,15 @@ class IDElement(StringElement):
 
 
 class DateTimeElement(StringElement):
-    def __init__(self, namespace, tag, value=None, format="102"):
+    def __init__(self, namespace, tag, value=None, format="102", date_time_namespace=NS_UDT):
         super().__init__(namespace, tag)
         self._value = value
         self._format = format
+        self._date_time_namespace = date_time_namespace
 
     def to_etree(self):
         t = self._etree_node()
-        node = ET.Element("{%s}%s" % (NS_UDT, "DateTimeString"))
+        node = ET.Element("{%s}%s" % (self._date_time_namespace, "DateTimeString"))
         if self._value:
             if self._format == "102":
                 node.text = self._value.strftime("%Y%m%d")
@@ -344,7 +346,7 @@ class DateTimeElement(StringElement):
     def from_etree(self, root):
         if len(root) != 1:
             raise TypeError("Date containers should have one child")
-        if root[0].tag != "{%s}%s" % (NS_UDT, "DateTimeString"):
+        if root[0].tag != "{%s}%s" % (self._date_time_namespace, "DateTimeString"):
             raise TypeError("Tag %s not recognized" % root[0].tag)
         self._format = root[0].attrib["format"]
         if self._format == "102":
@@ -382,7 +384,7 @@ class DirectDateTimeElement(StringElement):
     def from_etree(self, root):
         try:
             self._value = datetime.strptime(root.text, "%Y-%m-%dT%H:%M:%S").date()
-        except:
+        except Exception:
             self._value = ""
         self._set_on_input = True
         return self

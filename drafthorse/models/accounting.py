@@ -11,7 +11,6 @@ from .fields import (
     StringField,
 )
 
-
 class BillingSpecifiedPeriod(Element):
     description = StringField(
         NS_RAM,
@@ -26,17 +25,6 @@ class BillingSpecifiedPeriod(Element):
     class Meta:
         namespace = NS_RAM
         tag = "BillingSpecifiedPeriod"
-
-
-class SellerOrderReferencedDocument(Element):
-    issuer_ID = StringField(NS_RAM, "IssuerAssignedID", profile=COMFORT)
-    issue_date_time = DateTimeField(
-        NS_RAM, "FormattedIssueDateTime", required=True, profile=EXTENDED
-    )
-
-    class Meta:
-        namespace = NS_RAM
-        tag = "SellerOrderReferencedDocument"
 
 
 class LineApplicableTradeTax(Element):
@@ -83,15 +71,6 @@ class ApplicableTradeTax(Element):
         profile=COMFORT,
         _d="Grund der Steuerbefreiung (Freitext)",
     )
-    tax_point_date = DateTimeField(
-        NS_RAM, "TaxPointDate", required=False, profile=COMFORT
-    )
-    due_date_type_code = StringField(
-        NS_RAM,
-        "DueDateTypeCode",
-        required=False,
-        profile=BASIC,
-    )
     basis_amount = DecimalField(
         NS_RAM,
         "BasisAmount",
@@ -126,6 +105,15 @@ class ApplicableTradeTax(Element):
         required=False,
         profile=EXTENDED,
         _d="Grund der Steuerbefreiung (Code)",
+    )
+    tax_point_date = DateTimeField(
+        NS_RAM, "TaxPointDate", required=False, profile=COMFORT
+    )
+    due_date_type_code = StringField(
+        NS_RAM,
+        "DueDateTypeCode",
+        required=False,
+        profile=BASIC,
     )
     rate_applicable_percent = DecimalField(
         NS_RAM, "RateApplicablePercent", required=True, profile=BASIC
