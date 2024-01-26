@@ -1,6 +1,6 @@
 import os
 import pytest
-from datetime import date
+from datetime import date, datetime, timezone
 from decimal import Decimal
 
 from drafthorse.models.accounting import ApplicableTradeTax
@@ -41,7 +41,7 @@ def invoice_document(request):
     doc.trade.agreement.buyer_order.issue_date_time = datetime.now(timezone.utc)
     doc.trade.settlement.advance_payment.received_date = datetime.now(timezone.utc)
     doc.trade.agreement.customer_order.issue_date_time = datetime.now(timezone.utc)
-    
+
     li = LineItem()
     li.document.line_id = "1"
     li.product.name = "Rainbow"

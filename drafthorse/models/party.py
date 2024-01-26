@@ -62,11 +62,13 @@ class EmailURI(Element):
 class LegalOrganization(Element):
     id = StringField(NS_RAM, "ID", required=False, profile=BASIC)
     trade_name = StringField(
-        NS_RAM, "TradingBusinessName", required=False, profile=BASIC, _d="Name, unter dem der Käufers bekannt ist"
+        NS_RAM,
+        "TradingBusinessName",
+        required=False,
+        profile=BASIC,
+        _d="Name, unter dem der Käufers bekannt ist",
     )
-    trade_address = Field(
-        PostalTradeAddress, required=False, profile=EXTENDED 
-    )
+    trade_address = Field(PostalTradeAddress, required=False, profile=EXTENDED)
 
     class Meta:
         namespace = NS_RAM
@@ -99,8 +101,11 @@ class TradeParty(Element):
         _d="Globaler Identifier des Verkäufers",
     )
     name = StringField(NS_RAM, "Name", required=False, profile=BASIC)
-    legal_organization =  Field(
-        LegalOrganization, required=False, profile=BASIC, _d="Handelsinformationen des Käufers"
+    legal_organization = Field(
+        LegalOrganization,
+        required=False,
+        profile=BASIC,
+        _d="Handelsinformationen des Käufers",
     )
     description = StringField(
         NS_RAM,
@@ -131,6 +136,12 @@ class PayeeTradeParty(TradeParty):
     class Meta:
         namespace = NS_RAM
         tag = "PayeeTradeParty"
+
+
+class PayerTradeParty(TradeParty):
+    class Meta:
+        namespace = NS_RAM
+        tag = "PayerTradeParty"
 
 
 class InvoicerTradeParty(TradeParty):

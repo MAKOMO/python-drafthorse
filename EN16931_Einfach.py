@@ -12,26 +12,25 @@ from drafthorse.pdf import attach_xml
 
 
 def test_EN16931_Einfach_example():
-
     doc = Document()
-    doc.context.guideline_parameter.id = (
-        "urn:cen.eu:en16931:2017"
-    )
+    doc.context.guideline_parameter.id = "urn:cen.eu:en16931:2017"
     doc.header.id = "471102"
     doc.header.type_code = "380"
-    doc.header.issue_date_time = date.fromisoformat('20180305')
+    doc.header.issue_date_time = date.fromisoformat("20180305")
 
     note = IncludedNote()
     note.content.add("Rechnung gemäß Bestellung vom 01.03.2018.")
     doc.header.notes.add(note)
-    
+
     note = IncludedNote()
-    # BT-21 
-    note.subject_code = "REG" # REG=Regulatory information; code list: UNTDID 4451 "Text subject code qualifier"
+    # BT-21
+    note.subject_code = "REG"  # REG=Regulatory information; code list: UNTDID 4451 "Text subject code qualifier"
     # BT-22 Kommentarfeld
-    note.content.add("Lieferant GmbH\nLieferantenstraße 20\n80333 München\nDeutschland\nGeschäftsführer: Hans Muster\nHandelsregisternummer: H A 123")
+    note.content.add(
+        "Lieferant GmbH\nLieferantenstraße 20\n80333 München\nDeutschland\nGeschäftsführer: Hans Muster\nHandelsregisternummer: H A 123"
+    )
     doc.header.notes.add(note)
-    
+
     li = LineItem()
     li.document.line_id = "1"
     li.product.global_id = ("0160", "4012345001235")
@@ -59,7 +58,7 @@ def test_EN16931_Einfach_example():
     li.settlement.trade_tax.rate_applicable_percent = Decimal("7.00")
     li.settlement.monetary_summation.total_amount = Decimal("275.00")
     doc.trade.items.add(li)
-    
+
     doc.trade.agreement.seller.id = "549910"
     doc.trade.agreement.seller.global_id.add(("0088", "4000001123452"))
     doc.trade.agreement.seller.name = "Lieferant GmbH"
@@ -73,16 +72,16 @@ def test_EN16931_Einfach_example():
     seller_tr_va = TaxRegistration()
     seller_tr_va.id = ("VA", "DE123456789")
     doc.trade.agreement.seller.tax_registrations.add(seller_tr_va)
-    
+
     doc.trade.agreement.buyer.id = "GE2020211"
     doc.trade.agreement.buyer.name = "Kunden AG Mitte"
     doc.trade.agreement.buyer.address.postcode = "69876"
     doc.trade.agreement.buyer.address.line_one = "Kundenstraße 15"
     doc.trade.agreement.buyer.address.city_name = "Frankfurt"
     doc.trade.agreement.buyer.address.country_id = "DE"
-    
-    doc.trade.delivery.event.occurrence = date.fromisoformat('20180305')
-    
+
+    doc.trade.delivery.event.occurrence = date.fromisoformat("20180305")
+
     doc.trade.settlement.currency_code = "EUR"
     trade_tax = ApplicableTradeTax()
     trade_tax.calculated_amount = Decimal("19.25")
@@ -112,17 +111,21 @@ def test_EN16931_Einfach_example():
     doc.trade.settlement.monetary_summation.prepaid_total = Decimal("0.00")
     doc.trade.settlement.monetary_summation.due_amount = Decimal("529.87")
 
-### Serialization and PDF Generation
+    ### Serialization and PDF Generation
 
     xml = doc.serialize(schema="FACTUR-X_EN16931")
-    with open('factur-x.xml', 'wb') as f: 
+    with open("factur-x.xml", "wb") as f:
         f.write(xml)
     with open(
-        os.path.join(os.path.dirname(__file__), "tests", "samples", "invoice_pdf17.pdf"), "rb"
+        os.path.join(
+            os.path.dirname(__file__), "tests", "samples", "invoice_pdf17.pdf"
+        ),
+        "rb",
     ) as original_file:
         new_pdf_bytes = attach_xml(original_file.read(), xml, "EN 16931")
-        
+
     with open("EN16931_Einfach.pdf", "wb") as f:
         f.write(new_pdf_bytes)
+
 
 test_EN16931_Einfach_example()

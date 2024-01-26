@@ -119,10 +119,16 @@ class IDField(Field):
         if instance._data.get(self.name, None) is None:
             instance._data[self.name] = self.initialize()
 
-        if not isinstance(value, (tuple, list)):
-            raise TypeError("Please pass a 2-tuple of including scheme ID and ID.")
-        instance._data[self.name]._text = value[1]
-        instance._data[self.name]._scheme_id = value[0]
+        if isinstance(value, (tuple, list)):
+            if len(value) == 2:
+                instance._data[self.name]._text = value[1]
+                instance._data[self.name]._scheme_id = value[0]
+            else:
+                raise TypeError(
+                    "Please pass a 2-tuple of including scheme ID and ID, or just an ID."
+                )
+        else:
+            instance._data[self.name]._text = value
 
 
 class CurrencyField(Field):
@@ -208,7 +214,9 @@ class BinaryObjectField(Field):
             instance._data[self.name] = self.initialize()
 
         if not isinstance(value, (tuple, list)):
-            raise TypeError("Please pass a 2-tuple of including amount and unit code.")
+            raise TypeError(
+                "Please pass a 3-tuple of mimeCode, filename and base64-encoded binary."
+            )
         instance._data[self.name]._text = value[2]
         instance._data[self.name]._mime_code = value[0]
         instance._data[self.name]._filename = value[1]
@@ -238,7 +246,14 @@ class IndicatorField(Field):
 
 class DateTimeField(Field):
     def __init__(
-        self, namespace, tag, default=False, required=False, profile=BASIC, _d=None, date_time_namespace=NS_UDT
+        self,
+        namespace,
+        tag,
+        default=False,
+        required=False,
+        profile=BASIC,
+        _d=None,
+        date_time_namespace=NS_UDT,
     ):
         from .elements import DateTimeElement
 
@@ -253,7 +268,9 @@ class DateTimeField(Field):
         instance._data[self.name]._value = value
 
     def initialize(self):
-        return self.cls(self.namespace, self.tag, date_time_namespace=self._date_time_namespace)
+        return self.cls(
+            self.namespace, self.tag, date_time_namespace=self._date_time_namespace
+        )
 
 
 class DirectDateTimeField(Field):

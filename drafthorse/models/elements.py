@@ -7,7 +7,7 @@ from decimal import Decimal
 
 from drafthorse.utils import validate_xml
 
-from . import NS_UDT, NS_A
+from . import NS_UDT
 from .container import Container
 from .fields import Field
 
@@ -302,7 +302,8 @@ class IDElement(StringElement):
     def to_etree(self):
         node = self._etree_node()
         node.text = self._text
-        node.attrib["schemeID"] = self._scheme_id
+        if self._scheme_id != "":
+            node.attrib["schemeID"] = self._scheme_id
         return node
 
     def from_etree(self, root):
@@ -320,7 +321,9 @@ class IDElement(StringElement):
 
 
 class DateTimeElement(StringElement):
-    def __init__(self, namespace, tag, value=None, format="102", date_time_namespace=NS_UDT):
+    def __init__(
+        self, namespace, tag, value=None, format="102", date_time_namespace=NS_UDT
+    ):
         super().__init__(namespace, tag)
         self._value = value
         self._format = format
