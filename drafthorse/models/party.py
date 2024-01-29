@@ -60,13 +60,13 @@ class EmailURI(Element):
 
 
 class LegalOrganization(Element):
-    id = StringField(NS_RAM, "ID", required=False, profile=BASIC)
+    id = IDField(NS_RAM, "ID", required=False, profile=BASIC)
     trade_name = StringField(
         NS_RAM,
         "TradingBusinessName",
         required=False,
         profile=BASIC,
-        _d="Name, unter dem der Käufers bekannt ist",
+        _d="Firmenname, sofern abweichend vom Name",
     )
     trade_address = Field(PostalTradeAddress, required=False, profile=EXTENDED)
 
@@ -91,14 +91,14 @@ class TradeContact(Element):
 
 class TradeParty(Element):
     id = StringField(
-        NS_RAM, "ID", required=False, profile=COMFORT, _d="Identifier des Verkäufers"
+        NS_RAM, "ID", required=False, profile=COMFORT, _d="Kennung des Handelspartners"
     )
     global_id = MultiIDField(
         NS_RAM,
         "GlobalID",
         required=False,
         profile=COMFORT,
-        _d="Globaler Identifier des Verkäufers",
+        _d="Globaler Kennung des Handelspartners",
     )
     name = StringField(NS_RAM, "Name", required=False, profile=BASIC)
     legal_organization = Field(
@@ -115,10 +115,10 @@ class TradeParty(Element):
         _d="Freitext der Zahlungsbedingungen",
     )
     contact = Field(
-        TradeContact, required=False, profile=EXTENDED, _d="Ansprechpartner des Käufers"
+        TradeContact, required=False, profile=EXTENDED, _d="Ansprechpartner des Handelspartners"
     )
     address = Field(
-        PostalTradeAddress, required=False, profile=BASIC, _d="Anschrift des Käufers"
+        PostalTradeAddress, required=False, profile=BASIC, _d="Anschrift des Handelspartners"
     )
     electronic_address = MultiField(
         URIUniversalCommunication, required=False, profile=BASIC
